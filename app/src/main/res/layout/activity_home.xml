@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+   <ImageView
+       android:layout_width="match_parent"
+       android:src="@drawable/umbrella"
+       android:scaleType="centerCrop"
+       android:layout_height="match_parent" />
+
+    <View
+        android:background="@drawable/back_gradient"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></View>
+
+    
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/ah_et_city"
+        android:textColorHint="#AAFFFFFF"
+        android:textAlignment="center"
+        android:hint="Enter City name"
+        android:fontFamily="@font/vera"
+        android:layout_marginTop="32dp"
+        android:text=""
+        android:layout_marginLeft="50dp"
+        app:backgroundTint="#FFFFFF"
+        android:textColor="#FFFFFF"
+        android:layout_marginRight="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <ImageButton
+        android:id="@+id/ah_ib_submit"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/ah_et_city"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/forward_arrow_with_circle_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+
+
+
+        <RelativeLayout
+            android:layout_below="@+id/ah_ib_submit"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/ah_tv_temperature"
+                android:textAlignment="center"
+                android:textColor="#FFFFFF"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="64sp"
+                android:fontFamily="@font/vera"
+                android:text="23°"/>
+
+            <include
+                android:id="@+id/ah_custom_switch"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_alignRight="@+id/ah_tv_temperature"
+                android:layout_alignLeft="@+id/ah_tv_temperature"
+                layout="@layout/custom_switch"
+                android:layout_below="@+id/ah_tv_temperature"/>
+
+            <TextView
+                android:layout_below="@+id/ah_custom_switch"
+                android:id="@+id/ah_tv_tagline"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="28sp"
+                android:fontFamily="@font/verabd"
+                android:text="Grab an Umbrella"/>
+
+            <TextView
+                android:layout_below="@+id/ah_tv_tagline"
+                android:id="@+id/ah_tv_subtagline"
+                android:layout_marginLeft="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="4dp"
+                android:textColor="#FFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:fontFamily="@font/vera"
+                android:text="Its going to raiin"/>
+
+            <View
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_below="@+id/ah_tv_subtagline"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#77FFFFFF"/>
+
+
+
+
+        </RelativeLayout>
+
+
+
+</RelativeLayout>
