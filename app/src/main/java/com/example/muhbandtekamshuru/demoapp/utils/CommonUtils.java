@@ -66,19 +66,19 @@ public final class CommonUtils {
 
     public static void changeImageBackground(ImageView imageView, int weatherCode){
         switch (weatherCode){
-            case 200 : imageView.setImageResource(R.drawable.clouds_one);
+            case 200 : imageView.setImageResource(R.drawable.thunderstormmin);
                 break;
             case 300: imageView.setImageResource(R.drawable.umbrella_four);
                 break;
-            case 500 : imageView.setImageResource(R.drawable.umbrella_three);
+            case 500 : imageView.setImageResource(R.drawable.umbrella);
                 break;
-            case 600: imageView.setImageResource(R.drawable.umbrella);
+            case 600: imageView.setImageResource(R.drawable.snowmin);
                 break;
-            case 700 : imageView.setImageResource(R.drawable.umbrella_two);
+            case 700 : imageView.setImageResource(R.drawable.toronto);
                 break;
-            case 800: imageView.setImageResource(R.drawable.sun_one);
+            case 800: imageView.setImageResource(R.drawable.clearmin);
                 break;
-            case 801: imageView.setImageResource(R.drawable.umbrella);
+            case 900: imageView.setImageResource(R.drawable.cloudsmin);
                 break;
                 default: imageView.setImageResource(R.drawable.umbrella);
 

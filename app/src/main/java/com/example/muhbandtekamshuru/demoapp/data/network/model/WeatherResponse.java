@@ -144,13 +144,13 @@ public class WeatherResponse {
 
     public String getWeatherTagLine(int weatherCode){
         HashMap<Integer, String> map=new HashMap<Integer, String>();
-        map.put(200, "Thunderstorm");
-        map.put(300, "Drizzle");
-        map.put(500, "Rain");
-        map.put(600, "Snow");
-        map.put(700, "Atmosphere");
-        map.put(800, "Clear");
-        map.put(900, "Clouds");
+        map.put(200, "Thunderstorms:Don't shit your pants");
+        map.put(300, "Drizzle:Rain on its way");
+        map.put(500, "Grab an Umbrella:Its going to rain");
+        map.put(600, "Snow showers:Snow coats out please");
+        map.put(700, "Misty:Misty weather conditions");
+        map.put(800, "Clear Skies:Go out, have fun");
+        map.put(900, "Cloudy:Gray day");
 
         return map.get(weatherCode);
     }

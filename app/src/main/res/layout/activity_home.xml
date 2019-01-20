@@ -8,7 +8,7 @@
    <ImageView
        android:id="@+id/ah_iv_background"
        android:layout_width="match_parent"
-       android:src="@drawable/umbrella"
+       android:src="@drawable/defaultmin"
        android:scaleType="centerCrop"
        android:layout_height="match_parent" />
 
@@ -25,28 +25,32 @@
         android:layout_marginTop="32dp"
         android:layout_height="wrap_content">
 
+        <!--app:backgroundTint="#FFFFFF"-->
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/ah_et_city"
             android:textColorHint="#AAFFFFFF"
-            android:textAlignment="center"
+            android:gravity="center_vertical"
+            android:paddingLeft="16dp"
             android:hint="Enter City name"
             android:fontFamily="@font/vera"
             android:text=""
+            android:textSize="14sp"
             android:layout_gravity="center_vertical"
+            android:layout_marginBottom="1dp"
             android:layout_marginLeft="20dp"
-            app:backgroundTint="#FFFFFF"
+            android:background="@drawable/shape_edittext_background"
             android:textColor="#FFFFFF"
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="42dp" />
 
         <ImageButton
             android:layout_gravity="center_vertical"
             android:layout_marginRight="20dp"
             android:id="@+id/ah_ib_get_weather"
+            android:visibility="invisible"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/ah_et_city"
             android:background="@drawable/forward_arrow_with_circle_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,6 +61,7 @@
         <RelativeLayout
             android:layout_marginTop="32dp"
             android:id="@+id/ah_rl_details"
+            android:visibility="invisible"
             android:layout_below="@+id/ah_ll_input_container"
             android:layout_width="match_parent"
             android:layout_weight="1"
@@ -74,13 +79,14 @@
                 android:text="23°"/>
 
             <include
+                android:layout_marginBottom="12dp"
+                android:layout_marginRight="20dp"
                 android:id="@+id/ah_custom_switch"
-                android:layout_width="match_parent"
+                android:layout_width="100dp"
                 android:layout_height="16dp"
-                android:layout_alignRight="@+id/ah_tv_temperature"
-                android:layout_alignLeft="@+id/ah_tv_temperature"
+               android:layout_alignParentRight="true"
                 layout="@layout/custom_switch"
-                android:layout_below="@+id/ah_tv_temperature"/>
+               android:layout_alignBottom="@+id/ah_tv_temperature"/>
 
             <TextView
                 android:layout_below="@+id/ah_custom_switch"
@@ -150,24 +156,6 @@
 
                     <include
                         android:id="@+id/ah_layout_visibility_wind"
-                        android:layout_width="match_parent"
-                        android:layout_below="@+id/ah_layout_humidity_pressure"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_height="48dp" layout="@layout/item_info_row"/>
-
-                    <include
-
-                        android:layout_width="match_parent"
-                        android:layout_below="@+id/ah_layout_humidity_pressure"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="20dp"
-                        android:layout_height="48dp" layout="@layout/item_info_row"/>
-
-                    <include
-
                         android:layout_width="match_parent"
                         android:layout_below="@+id/ah_layout_humidity_pressure"
                         android:layout_marginLeft="20dp"

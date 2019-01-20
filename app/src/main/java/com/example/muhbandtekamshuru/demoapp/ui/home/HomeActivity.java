@@ -85,6 +85,10 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
 
     @BindView(R.id.ah_ll_fav_container)
     LinearLayout favCitiesContainer;
+
+    @BindView(R.id.ah_ll_input_container)
+    LinearLayout inputContainer;
+
     boolean favExpanded = false;
 
     int tempCelsius, tempFahrenheit;
@@ -134,8 +138,8 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
 
         String res = CommonUtils.getDateCurrentTimeZone(1547915239);
 
-        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
-        View inflatedLayout= inflater.inflate(R.layout.layout_favourite_cities, favCitiesContainer , false);
+         LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+        final View inflatedLayout= inflater.inflate(R.layout.layout_favourite_cities, favCitiesContainer , false);
         favCitiesContainer.addView(inflatedLayout);
 
         // click events
@@ -143,6 +147,7 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
             @Override
             public void onClick(View v) {
                 fetchWeatherData(AppConstants.FAVOURITE_CITY_ONE);
+                (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).performClick();
             }
         });
 
@@ -150,6 +155,7 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
             @Override
             public void onClick(View v) {
                 fetchWeatherData(AppConstants.FAVOURITE_CITY_TWO);
+                (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).performClick();
             }
         });
 
@@ -157,53 +163,55 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
             @Override
             public void onClick(View v) {
                 fetchWeatherData(AppConstants.FAVOURITE_CITY_THREE);
+                (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).performClick();
             }
         });
 
         (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ValueAnimator slideAnimator = ValueAnimator
-                        .ofInt(rlDetails.getHeight(), CommonUtils.dpToPx(48))
-                        .setDuration(300);
-
-
-// we want to manually handle how each tick is handled so add a
-// listener
-                slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        // get the value the interpolator is at
-                        Integer value = (Integer) animation.getAnimatedValue();
-                        // I'm going to set the layout's height 1:1 to the tick
-                        rlFavourite.getLayoutParams().height = value.intValue();
-                        // force all layouts to see which ones are affected by
-                        // this layouts height change
-                        rlFavourite.requestLayout();
-                    }
-                });
-
-                // create a new animationset
-                AnimatorSet set = new AnimatorSet();
-// since this is the only animation we are going to run we just use
-// play
-                set.play(slideAnimator);
-// this is how you set the parabola which controls acceleration
-                set.setInterpolator(new AccelerateDecelerateInterpolator());
-// start the animation
-                set.start();
-//                ResizeAnimation resizeAnimation = new ResizeAnimation(
-//                        rlFavourite,
-//                        100,
-//                        500
-//
-//                );
-//                resizeAnimation.setDuration(200);
-//                rlFavourite.startAnimation(resizeAnimation);
-//                alphaAnimation(etCity, 0, 1);
+                handleFavoritesAnimation(rlDetails.getHeight(), CommonUtils.dpToPx(48));
                 favExpanded = false;
+                alphaAnimation(inputContainer, 0, 1);
             }
         });
+    }
+
+    private void handleFavoritesAnimation(int startValue, int endValue){
+        ValueAnimator slideAnimator = ValueAnimator
+                .ofInt(startValue, endValue)
+                .setDuration(300);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                rlFavourite.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                rlFavourite.requestLayout();
+            }
+        });
+
+        // create a new animationset
+        AnimatorSet set = new AnimatorSet();
+        // since this is the only animation we are going to run we just use
+        // play
+        set.play(slideAnimator);
+        // this is how you set the parabola which controls acceleration
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        // start the animation
+        set.start();
+
+        if (startValue > endValue){
+            favExpanded = true;
+            alphaAnimation(inputContainer, 1, 0);
+        }else
+        {
+            favExpanded = false;
+            alphaAnimation(inputContainer, 0, 1);
+        }
     }
 
     @OnClick({R.id.cs_rl_celsius, R.id.cs_rl_fahrenheit, R.id.ah_view_tint})
@@ -256,54 +264,10 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
     @OnClick(R.id.ah_tv_favourite_label)
     protected void expand()
     {
-
-
         if (!favExpanded){
-
-            ValueAnimator slideAnimator = ValueAnimator
-                    .ofInt(rlFavourite.getHeight(), rlDetails.getHeight())
-                    .setDuration(300);
-
-
-// we want to manually handle how each tick is handled so add a
-// listener
-            slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    // get the value the interpolator is at
-                    Integer value = (Integer) animation.getAnimatedValue();
-                    // I'm going to set the layout's height 1:1 to the tick
-                    rlFavourite.getLayoutParams().height = value.intValue();
-                    // force all layouts to see which ones are affected by
-                    // this layouts height change
-                    rlFavourite.requestLayout();
-                }
-            });
-
-            // create a new animationset
-            AnimatorSet set = new AnimatorSet();
-// since this is the only animation we are going to run we just use
-// play
-            set.play(slideAnimator);
-// this is how you set the parabola which controls acceleration
-            set.setInterpolator(new AccelerateDecelerateInterpolator());
-// start the animation
-            set.start();
-            // rlFavourite.animate().scaleY(-100f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(1000);
-
-//            ResizeAnimation resizeAnimation = new ResizeAnimation(
-//                    rlFavourite,
-//                    500,
-//                    100
-//            );
-//            resizeAnimation.setDuration(200);
-//            rlFavourite.startAnimation(resizeAnimation);
-//            alphaAnimation(etCity, 1, 0);
+                handleFavoritesAnimation(rlFavourite.getHeight(), rlDetails.getHeight());
             favExpanded = true;
-
-
-        }else {
-            alphaAnimation(etCity, 1, 0);
+            alphaAnimation(inputContainer, 1, 0);
         }
     }
 
@@ -326,15 +290,30 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-
+                btnGetWeather.clearAnimation();
                 if (response.isSuccessful()){
+                    rlDetails.setVisibility(View.VISIBLE);
+                    rl_celsius.setBackgroundResource(R.drawable.shape_rectangle_left_filled_rounded);
+                    rl_fahrenheit.setBackgroundResource(R.drawable.shape_rectangle_right_rounded);
+                    tv_label_celsius.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+                    tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.white));
+
                     tempCelsius = CommonUtils.kelvinToCelsius(response.body().getMain().getTemp());
                     tempFahrenheit = CommonUtils.kelvinToFahrenheit(response.body().getMain().getTemp());
-                    temperature.setText(tempCelsius + "°");
+                    temperature.setText(tempCelsius + "°C");
 
-                    int newWeatherCode = response.body().getWeather().get(0).getId() / 100 * 100;
+                    int newWeatherCode = 0;
+                    if (response.body().getWeather().get(0).getId() == 801){
+                        newWeatherCode = 900;
+                    }else {
+                        newWeatherCode = response.body().getWeather().get(0).getId() / 100 * 100;
+                    }
+
                     CommonUtils.changeImageBackground(imgWeatherTheme, newWeatherCode);
-                    tagLine.setText(response.body().getWeatherTagLine(newWeatherCode));
+                    String line = response.body().getWeatherTagLine(newWeatherCode);
+                    String[] parts = line.split(":");
+                    tagLine.setText(parts[0]);
+                    subTagLine.setText(parts[1]);
 
                     sunriseLabel.setText("SUNRISE");
                     sunriseValue.setText(response.body().getSys().getSunrise());
@@ -352,18 +331,18 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
                     windValue.setText(response.body().getWind().getSpeed());
                     btnGetWeather.clearAnimation();
                     rlDetails.setVisibility(View.VISIBLE);
-                    Toast.makeText(HomeActivity.this, ""+rlDetails.getHeight() , Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(HomeActivity.this, ""+rlDetails.getHeight() , Toast.LENGTH_SHORT).show();
                     etCity.setText(city);
                 }else {
-                    Toast.makeText(HomeActivity.this, "Not success", Toast.LENGTH_SHORT).show();
+                    Log.e("Not successful", response.code() + "");
+                    //Toast.makeText(HomeActivity.this, "Not success", Toast.LENGTH_SHORT).show();
                 }
                 //mapData();
             }
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                btnGetWeather.clearAnimation();
-                Toast.makeText(HomeActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
+               // Toast.makeText(HomeActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
                 // Log error here since request failed
                 Log.e("Homeerror", t.toString());
             }
