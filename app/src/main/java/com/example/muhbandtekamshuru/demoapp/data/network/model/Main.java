@@ -11,10 +11,10 @@ public class Main {
     private double temp;
     @SerializedName("pressure")
     @Expose
-    private int pressure;
+    private double pressure;
     @SerializedName("humidity")
     @Expose
-    private int humidity;
+    private double humidity;
     @SerializedName("temp_min")
     @Expose
     private double tempMin;
@@ -31,7 +31,7 @@ public class Main {
     }
 
     public String getPressure() {
-        return pressure + "hPa";
+        return (int)pressure + " hPa";
     }
 
     public void setPressure(int pressure) {
@@ -39,7 +39,7 @@ public class Main {
     }
 
     public String getHumidity() {
-        return humidity + "%";
+        return (int)humidity + "%";
     }
 
     public void setHumidity(int humidity) {

@@ -1,13 +1,17 @@
 package com.example.muhbandtekamshuru.demoapp.ui.home;
 
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,19 +22,14 @@ import android.widget.Toast;
 import com.example.muhbandtekamshuru.demoapp.R;
 import com.example.muhbandtekamshuru.demoapp.data.network.ApiClient;
 import com.example.muhbandtekamshuru.demoapp.data.network.ApiInterface;
-import com.example.muhbandtekamshuru.demoapp.data.network.model.Movie;
-import com.example.muhbandtekamshuru.demoapp.data.network.model.MovieResponse;
 import com.example.muhbandtekamshuru.demoapp.data.network.model.WeatherResponse;
+import com.example.muhbandtekamshuru.demoapp.ui.custom.ResizeAnimation;
+import com.example.muhbandtekamshuru.demoapp.utils.AppConstants;
 import com.example.muhbandtekamshuru.demoapp.utils.CommonUtils;
 import com.example.muhbandtekamshuru.demoapp.utils.KeyboardUtils;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -78,10 +77,20 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
     @BindView(R.id.ah_tv_subtagline)
     TextView subTagLine;
 
+    @BindView(R.id.ah_rl_details)
+    RelativeLayout rlDetails;
+
+    @BindView(R.id.ah_rl_favourite)
+    RelativeLayout rlFavourite;
+
+    @BindView(R.id.ah_ll_fav_container)
+    LinearLayout favCitiesContainer;
+    boolean favExpanded = false;
+
     int tempCelsius, tempFahrenheit;
 
     List<String> list = new ArrayList<>();
-
+    AlphaAnimation animation1;
     TextView sunsetLabel, sunsetValue;
     TextView sunriseLabel, sunriseValue;
     TextView humidityLabel, humidityValue;
@@ -94,6 +103,11 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
+        animation1 = new AlphaAnimation(0.2f, 1.0f);
+        animation1.setDuration(1000);
+        animation1.setRepeatCount(10000);
+        animation1.setFillAfter(true);
 
         sunriseLabel = ((LinearLayout)findViewById(R.id.ah_layout_sunset_sunrise)).findViewById(R.id.iir_tv_left_key);
         sunriseValue = ((LinearLayout)findViewById(R.id.ah_layout_sunset_sunrise)).findViewById(R.id.iir_tv_left_value);
@@ -119,24 +133,107 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         }
 
         String res = CommonUtils.getDateCurrentTimeZone(1547915239);
+
+        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+        View inflatedLayout= inflater.inflate(R.layout.layout_favourite_cities, favCitiesContainer , false);
+        favCitiesContainer.addView(inflatedLayout);
+
+        // click events
+        (inflatedLayout.findViewById(R.id.lfc_tv_fav_one)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchWeatherData(AppConstants.FAVOURITE_CITY_ONE);
+            }
+        });
+
+        (inflatedLayout.findViewById(R.id.lfc_tv_fav_two)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchWeatherData(AppConstants.FAVOURITE_CITY_TWO);
+            }
+        });
+
+        (inflatedLayout.findViewById(R.id.lfc_tv_fav_three)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fetchWeatherData(AppConstants.FAVOURITE_CITY_THREE);
+            }
+        });
+
+        (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ValueAnimator slideAnimator = ValueAnimator
+                        .ofInt(rlDetails.getHeight(), CommonUtils.dpToPx(48))
+                        .setDuration(300);
+
+
+// we want to manually handle how each tick is handled so add a
+// listener
+                slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        // get the value the interpolator is at
+                        Integer value = (Integer) animation.getAnimatedValue();
+                        // I'm going to set the layout's height 1:1 to the tick
+                        rlFavourite.getLayoutParams().height = value.intValue();
+                        // force all layouts to see which ones are affected by
+                        // this layouts height change
+                        rlFavourite.requestLayout();
+                    }
+                });
+
+                // create a new animationset
+                AnimatorSet set = new AnimatorSet();
+// since this is the only animation we are going to run we just use
+// play
+                set.play(slideAnimator);
+// this is how you set the parabola which controls acceleration
+                set.setInterpolator(new AccelerateDecelerateInterpolator());
+// start the animation
+                set.start();
+//                ResizeAnimation resizeAnimation = new ResizeAnimation(
+//                        rlFavourite,
+//                        100,
+//                        500
+//
+//                );
+//                resizeAnimation.setDuration(200);
+//                rlFavourite.startAnimation(resizeAnimation);
+//                alphaAnimation(etCity, 0, 1);
+                favExpanded = false;
+            }
+        });
     }
 
-    @OnClick(R.id.cs_rl_celsius)
-    protected void onClickCelsius(){
-        rl_celsius.setBackgroundResource(R.drawable.shape_rectangle_left_filled_rounded);
-        rl_fahrenheit.setBackgroundResource(R.drawable.shape_rectangle_right_rounded);
-        tv_label_celsius.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.white));
-        temperature.setText(tempCelsius + "°C");
-    }
+    @OnClick({R.id.cs_rl_celsius, R.id.cs_rl_fahrenheit, R.id.ah_view_tint})
+    protected void onClickCelsius(View view){
+        if (view.getId() == R.id.cs_rl_celsius){
+            rl_celsius.setBackgroundResource(R.drawable.shape_rectangle_left_filled_rounded);
+            rl_fahrenheit.setBackgroundResource(R.drawable.shape_rectangle_right_rounded);
+            tv_label_celsius.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.white));
+            temperature.setText(tempCelsius + "°C");
+        }else if(view.getId() == R.id.cs_rl_fahrenheit) {
+            rl_fahrenheit.setBackgroundResource(R.drawable.shape_rectangle_right_filled_rounded);
+            rl_celsius.setBackgroundResource(R.drawable.shape_rectangle_left_rounded);
+            tv_label_celsius.setTextColor(getResources().getColor(R.color.white));
+            tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            temperature.setText(tempFahrenheit  + "°F" );
+        }else {
+//            if(favExpanded){
+//                ResizeAnimation resizeAnimation = new ResizeAnimation(
+//                        rlFavourite,
+//                        CommonUtils.dpToPx(48),
+//                        rlDetails.getHeight()
+//                );
+//                resizeAnimation.setDuration(200);
+//                rlFavourite.startAnimation(resizeAnimation);
+//                alphaAnimation(etCity, 0, 1);
+//                favExpanded = false;
+//            }
+        }
 
-    @OnClick(R.id.cs_rl_fahrenheit)
-    protected void onClickFahrenheit(){
-        rl_fahrenheit.setBackgroundResource(R.drawable.shape_rectangle_right_filled_rounded);
-        rl_celsius.setBackgroundResource(R.drawable.shape_rectangle_left_rounded);
-        tv_label_celsius.setTextColor(getResources().getColor(R.color.white));
-        tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-        temperature.setText(tempFahrenheit  + "°F" );
     }
 
     private void mapData(WeatherResponse response){
@@ -156,53 +253,121 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         btnGetWeather.setVisibility(featureName.length() > 0? View.VISIBLE : View.INVISIBLE);
     }
 
+    @OnClick(R.id.ah_tv_favourite_label)
+    protected void expand()
+    {
+
+
+        if (!favExpanded){
+
+            ValueAnimator slideAnimator = ValueAnimator
+                    .ofInt(rlFavourite.getHeight(), rlDetails.getHeight())
+                    .setDuration(300);
+
+
+// we want to manually handle how each tick is handled so add a
+// listener
+            slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    // get the value the interpolator is at
+                    Integer value = (Integer) animation.getAnimatedValue();
+                    // I'm going to set the layout's height 1:1 to the tick
+                    rlFavourite.getLayoutParams().height = value.intValue();
+                    // force all layouts to see which ones are affected by
+                    // this layouts height change
+                    rlFavourite.requestLayout();
+                }
+            });
+
+            // create a new animationset
+            AnimatorSet set = new AnimatorSet();
+// since this is the only animation we are going to run we just use
+// play
+            set.play(slideAnimator);
+// this is how you set the parabola which controls acceleration
+            set.setInterpolator(new AccelerateDecelerateInterpolator());
+// start the animation
+            set.start();
+            // rlFavourite.animate().scaleY(-100f).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(1000);
+
+//            ResizeAnimation resizeAnimation = new ResizeAnimation(
+//                    rlFavourite,
+//                    500,
+//                    100
+//            );
+//            resizeAnimation.setDuration(200);
+//            rlFavourite.startAnimation(resizeAnimation);
+//            alphaAnimation(etCity, 1, 0);
+            favExpanded = true;
+
+
+        }else {
+            alphaAnimation(etCity, 1, 0);
+        }
+    }
+
+
     @OnClick(R.id.ah_ib_get_weather)
     protected void getWeather(){
+        rlDetails.setVisibility(View.INVISIBLE);
+
+        btnGetWeather.startAnimation(animation1);
 
         KeyboardUtils.hideSoftInput(this);
 
+        fetchWeatherData(etCity.getText().toString());
+    }
+
+    private void fetchWeatherData(final String city){
         ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
 
-        Call<WeatherResponse> call = apiInterface.getWeatherDetails(etCity.getText().toString(), API_KEY);
+        Call<WeatherResponse> call = apiInterface.getWeatherDetails(city, API_KEY);
         call.enqueue(new Callback<WeatherResponse>() {
             @Override
             public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                ///List<Movie> movies = response.body().getResults();
-                //Log.d(TAG, "Number of movies received: " + movies.size());
-                // String main  = response.body().getWeather().get(0).getMain();
-                //Toast.makeText(HomeActivity.this, main, Toast.LENGTH_LONG).show();
 
-                tempCelsius = CommonUtils.kelvinToCelsius(response.body().getMain().getTemp());
-                tempFahrenheit = CommonUtils.kelvinToFahrenheit(response.body().getMain().getTemp());
-                temperature.setText(tempCelsius + "°");
+                if (response.isSuccessful()){
+                    tempCelsius = CommonUtils.kelvinToCelsius(response.body().getMain().getTemp());
+                    tempFahrenheit = CommonUtils.kelvinToFahrenheit(response.body().getMain().getTemp());
+                    temperature.setText(tempCelsius + "°");
 
-                int newWeatherCode = response.body().getWeather().get(0).getId() / 100 * 100;
-                CommonUtils.changeImageBackground(imgWeatherTheme, newWeatherCode);
-                tagLine.setText(response.body().getWeatherTagLine(newWeatherCode));
+                    int newWeatherCode = response.body().getWeather().get(0).getId() / 100 * 100;
+                    CommonUtils.changeImageBackground(imgWeatherTheme, newWeatherCode);
+                    tagLine.setText(response.body().getWeatherTagLine(newWeatherCode));
 
-                sunriseLabel.setText("SUNRISE");
-                sunriseValue.setText(response.body().getSys().getSunrise());
-                sunsetLabel.setText("SUNSET");
-                sunsetValue.setText(response.body().getSys().getSunset());
+                    sunriseLabel.setText("SUNRISE");
+                    sunriseValue.setText(response.body().getSys().getSunrise());
+                    sunsetLabel.setText("SUNSET");
+                    sunsetValue.setText(response.body().getSys().getSunset());
 
-                pressureLabel.setText("PRESSURE");
-                pressureValue.setText(response.body().getMain().getPressure());
-                humidityLabel.setText("HUMIDITY");
-                humidityValue.setText(response.body().getMain().getHumidity());
+                    pressureLabel.setText("PRESSURE");
+                    pressureValue.setText(response.body().getMain().getPressure());
+                    humidityLabel.setText("HUMIDITY");
+                    humidityValue.setText(response.body().getMain().getHumidity());
 
-                visibilityLabel.setText("VISIBILITY");
-                visibilityValue.setText(response.body().getVisibility());
-                windLabel.setText("WIND");
-                windValue.setText(response.body().getWind().getSpeed());
-
+                    visibilityLabel.setText("VISIBILITY");
+                    visibilityValue.setText(response.body().getVisibility());
+                    windLabel.setText("WIND");
+                    windValue.setText(response.body().getWind().getSpeed());
+                    btnGetWeather.clearAnimation();
+                    rlDetails.setVisibility(View.VISIBLE);
+                    Toast.makeText(HomeActivity.this, ""+rlDetails.getHeight() , Toast.LENGTH_SHORT).show();
+                    etCity.setText(city);
+                }else {
+                    Toast.makeText(HomeActivity.this, "Not success", Toast.LENGTH_SHORT).show();
+                }
                 //mapData();
             }
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
+                btnGetWeather.clearAnimation();
+                Toast.makeText(HomeActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
                 // Log error here since request failed
-                // Log.e(TAG, t.toString());
+                Log.e("Homeerror", t.toString());
             }
+
         });
     }
 
@@ -219,5 +384,12 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
     @Override
     public void hideProgressBar() {
 
+    }
+
+    public void alphaAnimation(View view, float start, float end){
+        AlphaAnimation animation1 = new AlphaAnimation(start, end);
+        animation1.setDuration(200);
+        animation1.setFillAfter(true);
+        view.startAnimation(animation1);
     }
 }

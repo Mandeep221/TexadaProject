@@ -9,10 +9,10 @@ public class Sys {
 
     @SerializedName("type")
     @Expose
-    private int type;
+    private double type;
     @SerializedName("id")
     @Expose
-    private int id;
+    private double id;
     @SerializedName("message")
     @Expose
     private double message;
@@ -21,12 +21,12 @@ public class Sys {
     private String country;
     @SerializedName("sunrise")
     @Expose
-    private int sunrise;
+    private long sunrise;
     @SerializedName("sunset")
     @Expose
-    private int sunset;
+    private long sunset;
 
-    public int getType() {
+    public double getType() {
         return type;
     }
 
@@ -34,7 +34,7 @@ public class Sys {
         this.type = type;
     }
 
-    public int getId() {
+    public double getId() {
         return id;
     }
 

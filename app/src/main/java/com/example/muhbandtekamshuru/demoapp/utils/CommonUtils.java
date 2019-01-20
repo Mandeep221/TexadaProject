@@ -1,6 +1,7 @@
 package com.example.muhbandtekamshuru.demoapp.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.widget.ImageView;
 
 import com.example.muhbandtekamshuru.demoapp.R;
@@ -18,13 +19,23 @@ public final class CommonUtils {
 
     public static String getDateCurrentTimeZone(long timestamp) {
         try{
-            Calendar calendar = Calendar.getInstance();
-            TimeZone tz = TimeZone.getDefault();
-            calendar.setTimeInMillis(timestamp * 1000);
-            calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.getTimeInMillis()));
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
-            Date currenTimeZone = (Date) calendar.getTime();
-            return sdf.format(currenTimeZone);
+//            Calendar calendar = Calendar.getInstance();
+//            TimeZone tz = TimeZone.getDefault();
+//            calendar.setTimeInMillis(timestamp * 1000);
+//            calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.getTimeInMillis()));
+//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+//            Date currenTimeZone = (Date) calendar.getTime();
+//            return sdf.format(currenTimeZone);
+            //long unixSeconds = 1372339860;
+// convert seconds to milliseconds
+            Date date = new java.util.Date(timestamp*1000L);
+// the format of your date
+            SimpleDateFormat sdf = new java.text.SimpleDateFormat("hh:mm a");
+// give a timezone reference for formatting (see comment at the bottom)
+            //sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT-4"));
+            sdf.setTimeZone(java.util.TimeZone.getDefault());
+            String formattedDate = sdf.format(date);
+            return formattedDate;
         }catch (Exception e) {
         }
         return "";
@@ -74,12 +85,13 @@ public final class CommonUtils {
         }
     }
 
-//    public static double FahrenheitToCelsius(double temp){
-//        Double b=temp-32;
-//        return b*5/9;
-//    }
-//
-//    public static int celsiusToFahrenheit(double temp){
-//
-//    }
+    public static float pxToDp(float px) {
+        float densityDpi = Resources.getSystem().getDisplayMetrics().densityDpi;
+        return px / (densityDpi / 160f);
+    }
+
+    public static int dpToPx(float dp) {
+        float density = Resources.getSystem().getDisplayMetrics().density;
+        return Math.round(dp * density);
+    }
 }

@@ -8,9 +8,9 @@ public class Clouds {
 
     @SerializedName("all")
     @Expose
-    private int all;
+    private double all;
 
-    public int getAll() {
+    public double getAll() {
         return all;
     }
 
