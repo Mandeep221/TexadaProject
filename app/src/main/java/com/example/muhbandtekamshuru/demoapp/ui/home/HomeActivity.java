@@ -82,11 +82,34 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
 
     List<String> list = new ArrayList<>();
 
+    TextView sunsetLabel, sunsetValue;
+    TextView sunriseLabel, sunriseValue;
+    TextView humidityLabel, humidityValue;
+    TextView pressureLabel, pressureValue;
+    TextView visibilityLabel, visibilityValue;
+    TextView windLabel, windValue;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
+        sunriseLabel = ((LinearLayout)findViewById(R.id.ah_layout_sunset_sunrise)).findViewById(R.id.iir_tv_left_key);
+        sunriseValue = ((LinearLayout)findViewById(R.id.ah_layout_sunset_sunrise)).findViewById(R.id.iir_tv_left_value);
+        sunsetLabel = ((LinearLayout)findViewById(R.id.ah_layout_sunset_sunrise)).findViewById(R.id.iir_tv_right_key);
+        sunsetValue = ((LinearLayout)findViewById(R.id.ah_layout_sunset_sunrise)).findViewById(R.id.iir_tv_right_value);
+
+        pressureLabel = ((LinearLayout)findViewById(R.id.ah_layout_humidity_pressure)).findViewById(R.id.iir_tv_left_key);
+        pressureValue = ((LinearLayout)findViewById(R.id.ah_layout_humidity_pressure)).findViewById(R.id.iir_tv_left_value);
+        humidityLabel = ((LinearLayout)findViewById(R.id.ah_layout_humidity_pressure)).findViewById(R.id.iir_tv_right_key);
+        humidityValue = ((LinearLayout)findViewById(R.id.ah_layout_humidity_pressure)).findViewById(R.id.iir_tv_right_value);
+
+        visibilityLabel = ((LinearLayout)findViewById(R.id.ah_layout_visibility_wind)).findViewById(R.id.iir_tv_left_key);
+        visibilityValue = ((LinearLayout)findViewById(R.id.ah_layout_visibility_wind)).findViewById(R.id.iir_tv_left_value);
+        windLabel = ((LinearLayout)findViewById(R.id.ah_layout_visibility_wind)).findViewById(R.id.iir_tv_right_key);
+        windValue = ((LinearLayout)findViewById(R.id.ah_layout_visibility_wind)).findViewById(R.id.iir_tv_right_value);
+
 
         presenter = new HomePresenter(this);
 
@@ -156,6 +179,22 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
                 int newWeatherCode = response.body().getWeather().get(0).getId() / 100 * 100;
                 CommonUtils.changeImageBackground(imgWeatherTheme, newWeatherCode);
                 tagLine.setText(response.body().getWeatherTagLine(newWeatherCode));
+
+                sunriseLabel.setText("SUNRISE");
+                sunriseValue.setText(response.body().getSys().getSunrise());
+                sunsetLabel.setText("SUNSET");
+                sunsetValue.setText(response.body().getSys().getSunset());
+
+                pressureLabel.setText("PRESSURE");
+                pressureValue.setText(response.body().getMain().getPressure());
+                humidityLabel.setText("HUMIDITY");
+                humidityValue.setText(response.body().getMain().getHumidity());
+
+                visibilityLabel.setText("VISIBILITY");
+                visibilityValue.setText(response.body().getVisibility());
+                windLabel.setText("WIND");
+                windValue.setText(response.body().getWind().getSpeed());
+
                 //mapData();
             }
 

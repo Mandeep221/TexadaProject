@@ -77,8 +77,9 @@ public class WeatherResponse {
         this.main = main;
     }
 
-    public int getVisibility() {
-        return visibility;
+    public String getVisibility() {
+        double distanceKm = (double) visibility/1000;
+        return String.format("%.1f Km",distanceKm);
     }
 
     public void setVisibility(int visibility) {

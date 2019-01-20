@@ -30,16 +30,16 @@ public class Main {
         this.temp = temp;
     }
 
-    public int getPressure() {
-        return pressure;
+    public String getPressure() {
+        return pressure + "hPa";
     }
 
     public void setPressure(int pressure) {
         this.pressure = pressure;
     }
 
-    public int getHumidity() {
-        return humidity;
+    public String getHumidity() {
+        return humidity + "%";
     }
 
     public void setHumidity(int humidity) {

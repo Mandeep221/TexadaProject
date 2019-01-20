@@ -1,6 +1,7 @@
 
 package com.example.muhbandtekamshuru.demoapp.data.network.model;
 
+import com.example.muhbandtekamshuru.demoapp.utils.CommonUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -57,16 +58,16 @@ public class Sys {
         this.country = country;
     }
 
-    public int getSunrise() {
-        return sunrise;
+    public String getSunrise() {
+        return  CommonUtils.getDateCurrentTimeZone(sunrise);
     }
 
     public void setSunrise(int sunrise) {
         this.sunrise = sunrise;
     }
 
-    public int getSunset() {
-        return sunset;
+    public String getSunset() {
+        return CommonUtils.getDateCurrentTimeZone(sunset);
     }
 
     public void setSunset(int sunset) {
