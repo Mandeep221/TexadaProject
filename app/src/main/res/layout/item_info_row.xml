@@ -1,18 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="wrap_content"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/iir_tv_sub"
-        android:layout_marginLeft="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="4dp"
-        android:textColor="#FFFFFF"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:fontFamily="@font/vera"
-        android:text="Its going to raiin"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/iir_tv_left_key"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="8sp"
+            android:fontFamily="@font/vera"
+            android:text="SUNSRISE"/>
+
+        <TextView
+            android:id="@+id/iir_tv_left_value"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:fontFamily="@font/vera"
+            android:text="7:15 AM"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/iir_tv_right_key"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="8sp"
+            android:fontFamily="@font/vera"
+            android:text="SUNSET"/>
+
+        <TextView
+            android:id="@+id/iir_tv_right_value"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
+            android:textColor="#FFFFFF"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:fontFamily="@font/vera"
+            android:text="4:35 PM"/>
+
+    </LinearLayout>
+
 
 </LinearLayout>

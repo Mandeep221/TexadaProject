@@ -6,13 +6,15 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/cs_rl_celsius"
         android:layout_width="0dp"
-    android:background="@drawable/shape_rectangle_left_filled_rounded"
+        android:background="@drawable/shape_rectangle_left_filled_rounded"
         android:layout_weight="1"
         android:layout_marginRight="2dp"
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/cs_tv_celsius"
             android:textColor="@color/colorPrimaryDark"
             app:fontFamily="@font/verabd"
             android:text="°C"
@@ -25,13 +27,15 @@
     </RelativeLayout>
 
     <RelativeLayout
-    android:background="@drawable/shape_rectangle_right_rounded"
+        android:id="@+id/cs_rl_fahrenheit"
+        android:background="@drawable/shape_rectangle_right_rounded"
         android:layout_weight="1"
         android:layout_width="0dp"
         android:layout_marginLeft="2dp"
         android:layout_height="match_parent">
 
         <TextView
+            android:id="@+id/cs_tv_fahrenheit"
             android:textColor="@color/colorPrimaryDark"
             android:text="°F"
             android:textSize="8sp"

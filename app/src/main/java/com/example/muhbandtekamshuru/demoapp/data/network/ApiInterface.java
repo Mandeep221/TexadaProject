@@ -1,6 +1,7 @@
 package com.example.muhbandtekamshuru.demoapp.data.network;
 
 import com.example.muhbandtekamshuru.demoapp.data.network.model.MovieResponse;
+import com.example.muhbandtekamshuru.demoapp.data.network.model.WeatherResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -14,5 +15,8 @@ public interface ApiInterface {
 
     @GET("movie/{id}")
     Call<MovieResponse> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("weather")
+    Call<WeatherResponse> getWeatherDetails(@Query("q") String city, @Query("APPID") String apiKey );
 
 }
