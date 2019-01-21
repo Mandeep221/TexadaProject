@@ -19,20 +19,8 @@ public final class CommonUtils {
 
     public static String getDateCurrentTimeZone(long timestamp) {
         try{
-//            Calendar calendar = Calendar.getInstance();
-//            TimeZone tz = TimeZone.getDefault();
-//            calendar.setTimeInMillis(timestamp * 1000);
-//            calendar.add(Calendar.MILLISECOND, tz.getOffset(calendar.getTimeInMillis()));
-//            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
-//            Date currenTimeZone = (Date) calendar.getTime();
-//            return sdf.format(currenTimeZone);
-            //long unixSeconds = 1372339860;
-// convert seconds to milliseconds
             Date date = new java.util.Date(timestamp*1000L);
-// the format of your date
             SimpleDateFormat sdf = new java.text.SimpleDateFormat("hh:mm a");
-// give a timezone reference for formatting (see comment at the bottom)
-            //sdf.setTimeZone(java.util.TimeZone.getTimeZone("GMT-4"));
             sdf.setTimeZone(java.util.TimeZone.getDefault());
             String formattedDate = sdf.format(date);
             return formattedDate;

@@ -1,13 +1,12 @@
 package com.example.muhbandtekamshuru.demoapp.data.network;
 
-import com.example.muhbandtekamshuru.demoapp.MainContract;
 import com.example.muhbandtekamshuru.demoapp.data.network.model.WeatherResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class ApiService implements MainContract.GetWeatherInteractor{
+public class ApiService implements GetWeatherInteractor {
 
     private final static String API_KEY = "099d5b5b2b974898e9b5db5f7bf6eaa4";
 
@@ -23,13 +22,13 @@ public class ApiService implements MainContract.GetWeatherInteractor{
                 if(response.isSuccessful()){
                     onFinishedListener.onSuccess(response.body());
                 }else {
-                    onFinishedListener.onFailure("Something went wrong, Status code: " + response.code());
+                    onFinishedListener.onFailure(response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<WeatherResponse> call, Throwable t) {
-                onFinishedListener.onFailure(t.toString());
+                onFinishedListener.onFailure(-1);
             }
         });
     }

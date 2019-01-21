@@ -1,19 +1,23 @@
 package com.example.muhbandtekamshuru.demoapp.ui.home;
 
-import android.view.View;
+import android.content.Context;
 
-import com.example.muhbandtekamshuru.demoapp.MainContract;
+import com.example.muhbandtekamshuru.demoapp.data.network.GetWeatherInteractor;
 import com.example.muhbandtekamshuru.demoapp.data.network.model.WeatherResponse;
+import com.example.muhbandtekamshuru.demoapp.utils.NetworkUtils;
 
-public class HomePresenter implements MainContract.GetWeatherInteractor.OnFinishedListener {
+public class HomePresenter implements GetWeatherInteractor.OnFinishedListener {
 
     //private User user;
     private View view;
-    private MainContract.GetWeatherInteractor weatherInteractor;
+    private Context context;
+    private GetWeatherInteractor weatherInteractor;
+    private boolean favExpanded = false;
 
-    public HomePresenter(View view, MainContract.GetWeatherInteractor weatherInteractor) {
+    public HomePresenter(Context context, View view, GetWeatherInteractor weatherInteractor) {
         //this.user = new User();
         this.view = view;
+        this.context = context;
         this.weatherInteractor = weatherInteractor;
     }
 
@@ -21,10 +25,32 @@ public class HomePresenter implements MainContract.GetWeatherInteractor.OnFinish
         if(city.isEmpty() || city == null){
             view.handleCityNameValidation();
         }else {
-            // make api call
-            weatherInteractor.getWeatherData(city, this);
-            view.handleSceneDuringApiRequest();
+            if(NetworkUtils.isNetworkConnected(context)){
+                // make api call
+                weatherInteractor.getWeatherData(city, this);
+                view.handleSceneDuringApiRequest();
+            }else {
+                view.showNetworkErrorMessage();
+            }
         }
+    }
+
+    public void onClickFavourites(){
+        if(!favExpanded){
+            view.showFavoritesView();
+            favExpanded = true;
+        }
+    }
+
+    public void onClickCancelFavourites(){
+        if(favExpanded){
+            view.hideFavouritesView();
+            favExpanded = false;
+        }
+    }
+
+    public void setFavouriteCity(String city){
+        view.setFavouriteCity(city);
     }
 
     @Override
@@ -34,16 +60,23 @@ public class HomePresenter implements MainContract.GetWeatherInteractor.OnFinish
     }
 
     @Override
-    public void onFailure(String error) {
-        view.onFailure(error);
+    public void onFailure(int error) {
         view.handleSceneAfterApiRequest();
+        view.onFailure(error);
     }
 
     public interface View{
         void handleCityNameValidation();
         void onSuccess(WeatherResponse response);
-        void onFailure(String error);
+        void onFailure(int error);
         void handleSceneDuringApiRequest();
         void handleSceneAfterApiRequest();
+        void showFavoritesView();
+        void hideFavouritesView();
+        void showNetworkErrorMessage();
+
+
+
+        void setFavouriteCity(String city);
     }
 }
