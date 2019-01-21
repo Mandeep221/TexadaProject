@@ -19,9 +19,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.muhbandtekamshuru.demoapp.MainContract;
 import com.example.muhbandtekamshuru.demoapp.R;
 import com.example.muhbandtekamshuru.demoapp.data.network.ApiClient;
 import com.example.muhbandtekamshuru.demoapp.data.network.ApiInterface;
+import com.example.muhbandtekamshuru.demoapp.data.network.ApiService;
 import com.example.muhbandtekamshuru.demoapp.data.network.model.WeatherResponse;
 import com.example.muhbandtekamshuru.demoapp.ui.custom.ResizeAnimation;
 import com.example.muhbandtekamshuru.demoapp.utils.AppConstants;
@@ -129,14 +131,8 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         windValue = ((LinearLayout)findViewById(R.id.ah_layout_visibility_wind)).findViewById(R.id.iir_tv_right_value);
 
 
-        presenter = new HomePresenter(this);
+        presenter = new HomePresenter(this, new ApiService());
 
-        if (API_KEY.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Please obtain your API KEY first from themoviedb.org", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        String res = CommonUtils.getDateCurrentTimeZone(1547915239);
 
          LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
         final View inflatedLayout= inflater.inflate(R.layout.layout_favourite_cities, favCitiesContainer , false);
@@ -146,7 +142,7 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         (inflatedLayout.findViewById(R.id.lfc_tv_fav_one)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchWeatherData(AppConstants.FAVOURITE_CITY_ONE);
+                presenter.getWeatherData(AppConstants.FAVOURITE_CITY_ONE);
                 (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).performClick();
             }
         });
@@ -154,7 +150,7 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         (inflatedLayout.findViewById(R.id.lfc_tv_fav_two)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchWeatherData(AppConstants.FAVOURITE_CITY_TWO);
+                presenter.getWeatherData(AppConstants.FAVOURITE_CITY_TWO);
                 (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).performClick();
             }
         });
@@ -162,7 +158,7 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
         (inflatedLayout.findViewById(R.id.lfc_tv_fav_three)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchWeatherData(AppConstants.FAVOURITE_CITY_THREE);
+                presenter.getWeatherData(AppConstants.FAVOURITE_CITY_THREE);
                 (inflatedLayout.findViewById(R.id.lfc_tv_cancel)).performClick();
             }
         });
@@ -229,35 +225,14 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
             tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             temperature.setText(tempFahrenheit  + "°F" );
         }else {
-//            if(favExpanded){
-//                ResizeAnimation resizeAnimation = new ResizeAnimation(
-//                        rlFavourite,
-//                        CommonUtils.dpToPx(48),
-//                        rlDetails.getHeight()
-//                );
-//                resizeAnimation.setDuration(200);
-//                rlFavourite.startAnimation(resizeAnimation);
-//                alphaAnimation(etCity, 0, 1);
-//                favExpanded = false;
-//            }
+
         }
 
-    }
-
-    private void mapData(WeatherResponse response){
-        tempCelsius = CommonUtils.kelvinToCelsius(response.getMain().getTemp());
-        tempFahrenheit = CommonUtils.kelvinToFahrenheit(response.getMain().getTemp());
-        temperature.setText(tempCelsius + "°");
-
-        int newWeatherCode = response.getWeather().get(0).getId() / 100 * 100;
-        CommonUtils.changeImageBackground(imgWeatherTheme, newWeatherCode);
-        tagLine.setText(response.getWeatherTagLine(newWeatherCode));
     }
 
     @OnTextChanged(R.id.ah_et_city)
     protected void onTextChanged(CharSequence text) {
         String featureName = text.toString();
-        //Log.d("gringe", featureName);
         btnGetWeather.setVisibility(featureName.length() > 0? View.VISIBLE : View.INVISIBLE);
     }
 
@@ -274,95 +249,70 @@ public class HomeActivity extends AppCompatActivity implements HomePresenter.Vie
 
     @OnClick(R.id.ah_ib_get_weather)
     protected void getWeather(){
+        presenter.getWeatherData(etCity.getText().toString());
+    }
+
+
+    @Override
+    public void handleCityNameValidation() {
+        Toast.makeText(HomeActivity.this, "Please enter city name..",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccess(WeatherResponse response) {
+        rl_celsius.setBackgroundResource(R.drawable.shape_rectangle_left_filled_rounded);
+        rl_fahrenheit.setBackgroundResource(R.drawable.shape_rectangle_right_rounded);
+        tv_label_celsius.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.white));
+
+        tempCelsius = CommonUtils.kelvinToCelsius(response.getMain().getTemp());
+        tempFahrenheit = CommonUtils.kelvinToFahrenheit(response.getMain().getTemp());
+        temperature.setText(tempCelsius + "°C");
+
+        int newWeatherCode;
+        if (response.getWeather().get(0).getId() == 801){
+            newWeatherCode = 900;
+        }else {
+            newWeatherCode = response.getWeather().get(0).getId() / 100 * 100;
+        }
+        CommonUtils.changeImageBackground(imgWeatherTheme, newWeatherCode);
+        String line = response.getWeatherTagLine(newWeatherCode);
+        String[] parts = line.split(":");
+        tagLine.setText(parts[0]);
+        subTagLine.setText(parts[1]);
+
+        sunriseLabel.setText("SUNRISE");
+        sunriseValue.setText(response.getSys().getSunrise());
+        sunsetLabel.setText("SUNSET");
+        sunsetValue.setText(response.getSys().getSunset());
+
+        pressureLabel.setText("PRESSURE");
+        pressureValue.setText(response.getMain().getPressure());
+        humidityLabel.setText("HUMIDITY");
+        humidityValue.setText(response.getMain().getHumidity());
+
+        visibilityLabel.setText("VISIBILITY");
+        visibilityValue.setText(response.getVisibility());
+        windLabel.setText("WIND");
+        windValue.setText(response.getWind().getSpeed());
+    }
+
+    @Override
+    public void onFailure(String error) {
+        Log.e("onFailure", error);
+    }
+
+    @Override
+    public void handleSceneDuringApiRequest() {
         rlDetails.setVisibility(View.INVISIBLE);
-
         btnGetWeather.startAnimation(animation1);
-
         KeyboardUtils.hideSoftInput(this);
-
-        fetchWeatherData(etCity.getText().toString());
-    }
-
-    private void fetchWeatherData(final String city){
-        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-
-        Call<WeatherResponse> call = apiInterface.getWeatherDetails(city, API_KEY);
-        call.enqueue(new Callback<WeatherResponse>() {
-            @Override
-            public void onResponse(Call<WeatherResponse> call, Response<WeatherResponse> response) {
-                btnGetWeather.clearAnimation();
-                if (response.isSuccessful()){
-                    rlDetails.setVisibility(View.VISIBLE);
-                    rl_celsius.setBackgroundResource(R.drawable.shape_rectangle_left_filled_rounded);
-                    rl_fahrenheit.setBackgroundResource(R.drawable.shape_rectangle_right_rounded);
-                    tv_label_celsius.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-                    tv_label_fahrenheit.setTextColor(getResources().getColor(R.color.white));
-
-                    tempCelsius = CommonUtils.kelvinToCelsius(response.body().getMain().getTemp());
-                    tempFahrenheit = CommonUtils.kelvinToFahrenheit(response.body().getMain().getTemp());
-                    temperature.setText(tempCelsius + "°C");
-
-                    int newWeatherCode = 0;
-                    if (response.body().getWeather().get(0).getId() == 801){
-                        newWeatherCode = 900;
-                    }else {
-                        newWeatherCode = response.body().getWeather().get(0).getId() / 100 * 100;
-                    }
-
-                    CommonUtils.changeImageBackground(imgWeatherTheme, newWeatherCode);
-                    String line = response.body().getWeatherTagLine(newWeatherCode);
-                    String[] parts = line.split(":");
-                    tagLine.setText(parts[0]);
-                    subTagLine.setText(parts[1]);
-
-                    sunriseLabel.setText("SUNRISE");
-                    sunriseValue.setText(response.body().getSys().getSunrise());
-                    sunsetLabel.setText("SUNSET");
-                    sunsetValue.setText(response.body().getSys().getSunset());
-
-                    pressureLabel.setText("PRESSURE");
-                    pressureValue.setText(response.body().getMain().getPressure());
-                    humidityLabel.setText("HUMIDITY");
-                    humidityValue.setText(response.body().getMain().getHumidity());
-
-                    visibilityLabel.setText("VISIBILITY");
-                    visibilityValue.setText(response.body().getVisibility());
-                    windLabel.setText("WIND");
-                    windValue.setText(response.body().getWind().getSpeed());
-                    btnGetWeather.clearAnimation();
-                    rlDetails.setVisibility(View.VISIBLE);
-                    //Toast.makeText(HomeActivity.this, ""+rlDetails.getHeight() , Toast.LENGTH_SHORT).show();
-                    etCity.setText(city);
-                }else {
-                    Log.e("Not successful", response.code() + "");
-                    //Toast.makeText(HomeActivity.this, "Not success", Toast.LENGTH_SHORT).show();
-                }
-                //mapData();
-            }
-
-            @Override
-            public void onFailure(Call<WeatherResponse> call, Throwable t) {
-               // Toast.makeText(HomeActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
-                // Log error here since request failed
-                Log.e("Homeerror", t.toString());
-            }
-
-        });
     }
 
     @Override
-    public void getWeather(String info) {
-
-    }
-
-    @Override
-    public void showProgressBar() {
-
-    }
-
-    @Override
-    public void hideProgressBar() {
-
+    public void handleSceneAfterApiRequest() {
+        btnGetWeather.clearAnimation();
+        rlDetails.setVisibility(View.VISIBLE);
     }
 
     public void alphaAnimation(View view, float start, float end){
