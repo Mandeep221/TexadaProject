@@ -1,6 +1,7 @@
 package com.example.muhbandtekamshuru.demoapp.ui.home;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.muhbandtekamshuru.demoapp.data.network.GetWeatherInteractor;
 import com.example.muhbandtekamshuru.demoapp.data.network.model.WeatherResponse;

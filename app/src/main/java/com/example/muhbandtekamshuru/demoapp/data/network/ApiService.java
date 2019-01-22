@@ -1,5 +1,7 @@
 package com.example.muhbandtekamshuru.demoapp.data.network;
 
+import android.util.Log;
+
 import com.example.muhbandtekamshuru.demoapp.data.network.model.WeatherResponse;
 
 import retrofit2.Call;
